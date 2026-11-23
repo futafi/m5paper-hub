@@ -2,6 +2,14 @@
 
 Turn an **M5Paper** (the original v1.1, 4.7" e-ink) into a battery-powered wall display for anything you can describe in a little JSON: prices, server load, headlines, weather, your own dashboards.
 
+![An M5Paper on a desk stand showing a dashboard page](docs/device.jpg)
+
+| | |
+|---|---|
+| ![Home page: date, weather, prices, headlines, system load](docs/home.png) | ![A custom dashboard page with charts and tappable buttons](docs/strata.png) |
+
+Two pages exactly as the panel draws them (960×540, 16 grays). The right one is a custom dashboard whose buttons are taps handled by its feed.
+
 ```
 feeds (anywhere)  --JSON-->  hub (a Linux box on your LAN)  --changed pixels-->  M5Paper
                              renders pages                  <--taps, wheel-----
