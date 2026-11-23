@@ -51,10 +51,10 @@ Every widget has `type` and usually `label`. `note` is small text at the right o
 | `type` | Keys | Draws |
 |---|---|---|
 | `metric` | `value`, `unit`, `sub`, `trend` (numbers) | One big value, a line of small text, an optional sparkline. |
-| `bars` | `values` (numbers) or `series` (`[{name, values}]`, up to 3, stacked), `x` (labels) | Bar chart. |
+| `bars` | `values` (numbers) or `series` (`[{name, values}]`, up to 3, stacked), `x` (labels) | Bar chart. Negative values hang below a zero line. |
 | `line` | `values` or `series`, `x` | Line chart with min and max. |
 | `gauge` | `value`, `max` (default 100), `text` | Text over a filled bar. |
-| `list` | `items` (strings or `{text, sub}`), `size` (px, default 22), `lines` (per item, default 2) | Wrapped rows, for headlines. Japanese wraps anywhere. |
+| `list` | `items` (strings or `{text, sub, value}`), `size` (px, default 22), `lines` (per item, default 2) | Wrapped rows, for headlines. Japanese wraps anywhere. `value` (string or number) is drawn at the right edge of the row, for name–number tables. |
 | `text` | `text`, `size` (default 24) | Wrapped paragraph. |
 | `buttons` | `options`: `[{label, action, selected}]` | A row of buttons. See Actions. |
 

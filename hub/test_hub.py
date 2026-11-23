@@ -118,3 +118,25 @@ def test_feed_buttons_become_feed_actions(hub):
     actions = [s[4] for s in hub.spots["m5-test"]]
     assert "feed:demo:mode:b" in actions and "feed:demo:mode:a" not in actions
 
+
+
+def draw(widget, size=(240, 120)):
+    img = Image.new("L", size, render.WHITE)
+    render.WIDGETS[widget["type"]](render.ImageDraw.Draw(img), (0, 0, *size), widget)
+    return img
+
+
+def test_negative_bars_hang_below_the_zero_line():
+    img = draw({"type": "bars", "values": [2, -2]})
+    zero = (120 - 22) - (120 - 22 - 2) // 2  # the zero line sits halfway up the plot
+    assert img.getpixel((60, zero - 20)) == render.BLACK and img.getpixel((60, zero + 20)) == render.WHITE
+    assert img.getpixel((180, zero + 20)) == render.BLACK and img.getpixel((180, zero - 20)) == render.WHITE
+
+
+def test_list_value_is_drawn_at_the_right_edge():
+    plain = draw({"type": "list", "items": [{"text": "researcher"}]})
+    valued = draw({"type": "list", "items": [{"text": "researcher", "value": 84}]})
+    right = (200, 0, 240, 40)
+    assert plain.crop(right).getextrema() == (render.WHITE, render.WHITE)
+    assert valued.crop(right).getextrema()[0] == render.BLACK
+    assert plain.crop((0, 0, 150, 120)).tobytes() == valued.crop((0, 0, 150, 120)).tobytes()

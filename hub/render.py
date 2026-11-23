@@ -194,29 +194,35 @@ def series_of(widget):
 
 
 def w_bars(d, box, widget):
-    """Bars; several series are stacked, darkest at the bottom."""
+    """Bars; several series are stacked, darkest nearest the zero line.
+
+    Positive values stack upwards and negative ones downwards.
+    """
     x, y, w, h = box
     series = series_of(widget)[:len(SERIES_INK)]
     count = max((len(v) for _, v in series), default=0)
     if not count:
         return []
-    totals = [sum((v[i] or 0) for _, v in series if i < len(v)) for i in range(count)]
-    top = max(totals) or 1.0
+    column = lambda i: [(v[i] or 0) for _, v in series if i < len(v)]
+    high = max(max(sum(v for v in column(i) if v > 0) for i in range(count)), 0.0)
+    low = min(min(sum(v for v in column(i) if v < 0) for i in range(count)), 0.0)
+    span = (high - low) or 1.0
     plot_h = h - 22
-    d.line([(x, y + plot_h), (x + w, y + plot_h)], fill=DARK)
+    at = lambda v: y + plot_h - (v - low) / span * (plot_h - 2)
+    d.line([(x, at(0)), (x + w, at(0))], fill=DARK)
     slot = w / count
     gap = 1 if slot < 8 else max(2, int(slot * 0.2))
     for i in range(count):
         left, right = x + i * slot + gap / 2, x + (i + 1) * slot - gap / 2
-        level = 0.0
+        up = down = 0.0
         for index, (_, values) in enumerate(series):
             v = (values[i] or 0) if i < len(values) else 0
-            if v <= 0:
-                continue
-            y0 = y + plot_h - (level + v) / top * (plot_h - 2)
-            y1 = y + plot_h - level / top * (plot_h - 2)
-            d.rectangle([left, y0, right - 1, y1], fill=SERIES_INK[index])
-            level += v
+            if v > 0:
+                d.rectangle([left, at(up + v), right - 1, at(up)], fill=SERIES_INK[index])
+                up += v
+            elif v < 0:
+                d.rectangle([left, at(down), right - 1, at(down + v)], fill=SERIES_INK[index])
+                down += v
     x_labels(d, x, y + plot_h + 3, w, widget.get("x"), count)
     return []
 
@@ -272,12 +278,16 @@ def w_list(d, box, widget):
         if not isinstance(item, dict):
             item = {"text": item}
         sub = str(item.get("sub") or "")
-        lines = wrap(item.get("text") or "", w, size, max_lines=max_lines)
+        value = "" if item.get("value") is None else show(item["value"])
+        room = max(w // 3, w - text_width(value, size) - 12) if value else w
+        lines = wrap(item.get("text") or "", room, size, max_lines=max_lines)
         need = len(lines) * line_h + (20 if sub else 0)
         if cy + need > y + h:
             break
         if index:
             d.line([(x, cy - 5), (x + w, cy - 5)], fill=PALE)
+        if value:
+            d.text((x + w, cy), ellipsize(value, w - room - 12, size), font=font(size), fill=BLACK, anchor="ra")
         for line in lines:
             d.text((x, cy), line, font=font(size), fill=BLACK)
             cy += line_h
