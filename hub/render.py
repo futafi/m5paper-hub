@@ -244,7 +244,7 @@ def w_line(d, box, widget):
         points = [(plot[0] + i * (plot[2] - 1) / last, plot[1] + plot[3] - 1 - (v - low) / span * (plot[3] - 1))
                   for i, v in enumerate(vs) if v is not None]
         if len(points) > 1:
-            d.line(points, fill=SERIES_INK[index], width=3 if index == 0 else 2, joint="curve")
+            d.line(points, fill=SERIES_INK[index], width=5 if index == 0 else 4, joint="curve")
     d.text((x + w, plot[1]), fmt(high), font=font(16), fill=DARK, anchor="ra")
     d.text((x + w, plot[1] + plot[3]), fmt(low), font=font(16), fill=DARK, anchor="rb")
     x_labels(d, x, y + h - 22, plot[2], widget.get("x"), max(len(vs) for _, vs in series), slots=False)
