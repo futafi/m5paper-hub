@@ -1,0 +1,8 @@
+secrets.h
+.pio/
+__pycache__/
+.pytest_cache/
+hub/vendor/
+hub/fonts/
+hub/config.toml
+hub/config.deployed.toml

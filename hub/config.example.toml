@@ -1,0 +1,78 @@
+# M5Paper hub configuration. Copy to config.toml; the hub rereads it when it changes.
+
+port = 60091
+bind = "0.0.0.0"
+timezone = "Asia/Tokyo"
+interval_s = 600                     # default device wake interval
+intervals_s = [120, 300, 600, 1800]  # choices on the device's settings page
+full_every_s = 3600                  # flash-clean the panel this often if it had partial updates
+token = ""                           # if set, PUT /feeds/* needs the header X-Hub-Token
+
+# --- feeds the hub fetches itself -------------------------------------------
+# exec: a command printing one feed JSON on stdout (run from this file's folder).
+# url:  an address returning one feed JSON.
+# Feeds pushed with PUT /feeds/<name> need no entry here.
+
+[feed.markets]
+exec = ["python3", "feeds/markets.py", "USDJPY=X:USD/JPY", "BTC-JPY:BTC/JPY", "ETH-JPY:ETH/JPY", "BTC-USD:BTC/USD"]
+every_s = 300
+
+[feed.news]
+exec = ["python3", "feeds/news.py"]
+every_s = 900
+
+[feed.weather]
+exec = ["python3", "feeds/weather.py", "--lat", "35.68", "--lon", "139.76", "--place", "東京"]
+every_s = 1800
+
+# --- pages -------------------------------------------------------------------
+# grid = [columns, rows]; each cell is { w = "feed.widget", at = [col, row, colspan, rowspan] }.
+# Optional per cell: label = "..." replaces the widget's own label.
+
+[[page]]
+title = "Home"
+grid = [4, 4]
+cells = [
+  { w = "hub.date",        at = [0, 0, 1, 1] },
+  { w = "weather.now",     at = [1, 0, 1, 1] },
+  { w = "markets.usdjpy",  at = [2, 0, 1, 1] },
+  { w = "markets.btcjpy",  at = [3, 0, 1, 1] },
+  { w = "news.headlines",  at = [0, 1, 2, 3], size = 21 },
+  { w = "weather.temp",    at = [2, 1, 2, 1] },
+  { w = "weather.rain",    at = [2, 2, 2, 1] },
+  { w = "sysmon.cpu", at = [2, 3, 1, 1] },
+  { w = "sysmon.mem", at = [3, 3, 1, 1] },
+]
+
+[[page]]
+title = "Markets"
+grid = [4, 2]
+cells = [
+  { w = "markets.usdjpy_chart", at = [0, 0, 2, 1] },
+  { w = "markets.btcjpy_chart", at = [2, 0, 2, 1] },
+  { w = "markets.ethjpy_chart", at = [0, 1, 2, 1] },
+  { w = "markets.btcusd",       at = [2, 1, 1, 1] },
+  { w = "markets.ethjpy",       at = [3, 1, 1, 1] },
+]
+
+[[page]]
+title = "News"
+grid = [1, 1]
+cells = [
+  { w = "news.headlines", at = [0, 0, 1, 1] },
+]
+
+# A feed with actions (buttons the device can tap). See feeds/strata.py.
+# [feed.strata]
+# exec = ["python3", "feeds/strata.py", "--url", "http://127.0.0.1:8090/api/eink"]
+# every_s = 60
+#
+# [[page]]
+# title = "Strata"
+# grid = [4, 6]
+# cells = [
+#   { w = "strata.tok_s",        at = [0, 0, 1, 2] },
+#   { w = "strata.input_chart",  at = [0, 2, 2, 3] },
+#   { w = "strata.range",        at = [2, 5, 1, 1] },
+#   { w = "strata.power",        at = [3, 5, 1, 1] },
+# ]

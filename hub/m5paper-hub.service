@@ -1,0 +1,13 @@
+[Unit]
+Description=M5Paper hub (feeds -> e-ink frames)
+
+[Service]
+Environment=PYTHONPATH=%h/.local/share/m5paper-hub/hub/vendor
+ExecStart=/usr/bin/python3 %h/.local/share/m5paper-hub/hub/hub.py --config %h/.local/share/m5paper-hub/config.toml --state %h/.local/state/m5paper-hub
+Restart=on-failure
+RestartSec=3s
+UMask=0077
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target

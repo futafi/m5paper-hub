@@ -1,0 +1,13 @@
+[Unit]
+Description=M5Paper sysmon feed (pushes CPU/memory/disk to the hub)
+After=network-online.target
+
+[Service]
+# Copy sysmon.py anywhere and adjust the path and the hub address.
+ExecStart=/usr/bin/python3 %h/.local/share/m5paper-hub/feeds/sysmon.py --hub http://127.0.0.1:60091 --name sysmon --every 60
+Restart=always
+RestartSec=10s
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target
